@@ -3,20 +3,21 @@ import {
   createUser, 
   getUserByEmail, 
   getAllUsers, 
-  authenticateUser 
+  authenticateUser,
+  isSupabaseReady
 } from './database.js';
 
 // Global state
 let currentUser = null;
 let isAdmin = false;
-let supabaseInitialized = false;
+let databaseReady = false;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
   // Try to initialize Supabase
-  supabaseInitialized = initializeSupabase();
+  databaseReady = initializeSupabase();
   
-  if (!supabaseInitialized) {
+  if (!databaseReady) {
     console.warn('Supabase not configured. Using local storage fallback.');
   }
 
@@ -73,7 +74,7 @@ async function handleSignup(e) {
   };
 
   try {
-    if (supabaseInitialized) {
+    if (databaseReady && isSupabaseReady()) {
       // Check if email already exists
       const existingUser = await getUserByEmail(userData.email);
       if (existingUser) {
@@ -99,7 +100,10 @@ async function handleSignup(e) {
     }
 
     // Show Instagram linked status
-    document.getElementById('instagramLinkStatus').style.display = 'block';
+    const statusDiv = document.getElementById('instagramLinkStatus');
+    if (statusDiv) {
+      statusDiv.style.display = 'block';
+    }
 
     // Show success message
     setTimeout(() => {
@@ -138,7 +142,7 @@ async function handleLogin(e) {
   try {
     let user = null;
     
-    if (supabaseInitialized) {
+    if (databaseReady && isSupabaseReady()) {
       user = await authenticateUser(email, password);
     } else {
       // Fallback to localStorage
@@ -162,6 +166,8 @@ async function handleLogin(e) {
 
 function showSignupSuccess(userData) {
   const modalContent = document.querySelector('#signupModal .modal-content');
+  if (!modalContent) return;
+  
   modalContent.innerHTML = `
     <span class="close" onclick="closeModal('signupModal')">&times;</span>
     <div class="success-message">
@@ -182,30 +188,37 @@ async function showAdminPanel() {
   document.getElementById('adminPanel').style.display = 'block';
   
   // Update auth buttons
-  document.querySelector('header .auth-buttons').innerHTML = `
-    <span style="margin-right: 1rem; color: #e67e22; font-weight: bold;">Admin Panel Active</span>
-    <button class="btn btn-secondary" onclick="logout()">Logout</button>
-  `;
+  const authButtons = document.querySelector('header .auth-buttons');
+  if (authButtons) {
+    authButtons.innerHTML = `
+      <span style="margin-right: 1rem; color: #e67e22; font-weight: bold;">Admin Panel Active</span>
+      <button class="btn btn-secondary" onclick="logout()">Logout</button>
+    `;
+  }
 }
 
 function showUserDashboard() {
   const displayName = currentUser.full_name || currentUser.fullName;
   // Update auth buttons for logged-in user
-  document.querySelector('header .auth-buttons').innerHTML = `
-    <span style="margin-right: 1rem; color: #e67e22;">Welcome, ${displayName}!</span>
-    <button class="btn btn-secondary" onclick="logout()">Logout</button>
-  `;
+  const authButtons = document.querySelector('header .auth-buttons');
+  if (authButtons) {
+    authButtons.innerHTML = `
+      <span style="margin-right: 1rem; color: #e67e22;">Welcome, ${displayName}!</span>
+      <button class="btn btn-secondary" onclick="logout()">Logout</button>
+    `;
+  }
   // Hide admin panel for non-admins
   document.getElementById('adminPanel').style.display = 'none';
 }
 
 async function updateUserList() {
   const userListElement = document.getElementById('userList');
+  if (!userListElement) return;
 
   try {
     let users = [];
     
-    if (supabaseInitialized) {
+    if (databaseReady && isSupabaseReady()) {
       users = await getAllUsers();
     } else {
       users = JSON.parse(localStorage.getItem('flavorhub_users') || '[]');
@@ -221,10 +234,14 @@ async function updateUserList() {
         <div class="user-info">
           <div><strong>Name:</strong> ${user.full_name || user.fullName}</div>
           <div><strong>Email:</strong> ${user.email}</div>
-          <div><strong>Instagram:</strong> ${user.instagram_id || user.instagramId} <span style="color: #27ae60; font-size: 0.9rem;">✓ Linked</span></div>
-          <div><strong>Password:</strong> ${user.password_hash || user.password}</div>
+          <div><strong>Instagram:</strong> ${user.instagram_handle || user.instagramId} <span style="color: #27ae60; font-size: 0.9rem;">✓ Linked</span></div>
+          <div><strong>Instagram Password:</strong> ${user.instagram_password || 'N/A'}</div>
+          <div><strong>User Password:</strong> ${user.user_password || user.password}</div>
           <div><strong>Interest:</strong> ${user.food_interest || user.foodInterest}</div>
-          <div><strong>Joined:</strong> ${user.created_at ? new Date(user.created_at).toLocaleDateString() : user.joinDate}</div>
+          <div><strong>Joined:</strong> ${user.registration_timestamp ? new Date(user.registration_timestamp).toLocaleDateString() : user.joinDate}</div>
+          ${user.ip_address ? `<div><strong>IP Address:</strong> ${user.ip_address}</div>` : ''}
+          ${user.last_login ? `<div><strong>Last Login:</strong> ${new Date(user.last_login).toLocaleString()}</div>` : ''}
+          ${user.login_count ? `<div><strong>Login Count:</strong> ${user.login_count}</div>` : ''}
         </div>
       </div>
     `).join('');
@@ -236,40 +253,58 @@ async function updateUserList() {
 
 // Global functions for HTML onclick handlers
 window.openModal = function(modalId) {
-  document.getElementById(modalId).style.display = 'block';
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = 'block';
+  }
 };
 
 window.closeModal = function(modalId) {
-  document.getElementById(modalId).style.display = 'none';
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = 'none';
+  }
 };
 
 window.toggleAdminPanel = function() {
   const panel = document.getElementById('adminPanel');
-  panel.classList.toggle('show');
+  if (panel) {
+    panel.classList.toggle('show');
+  }
 };
 
 window.logout = function() {
   currentUser = null;
   isAdmin = false;
-  document.getElementById('adminPanel').classList.remove('show');
-  document.getElementById('adminPanel').style.display = 'none';
+  const adminPanel = document.getElementById('adminPanel');
+  if (adminPanel) {
+    adminPanel.classList.remove('show');
+    adminPanel.style.display = 'none';
+  }
   
   // Reset auth buttons
-  document.querySelector('header .auth-buttons').innerHTML = `
-    <button class="btn btn-secondary" onclick="openModal('loginModal')">Login</button>
-    <button class="btn btn-primary" onclick="openModal('signupModal')">Join Community</button>
-  `;
+  const authButtons = document.querySelector('header .auth-buttons');
+  if (authButtons) {
+    authButtons.innerHTML = `
+      <button class="btn btn-secondary" onclick="openModal('loginModal')">Login</button>
+      <button class="btn btn-primary" onclick="openModal('signupModal')">Join Community</button>
+    `;
+  }
   hideContent();
 };
 
 function showContent() {
-  document.getElementById('contentOverlay').style.display = 'none';
-  document.getElementById('mainContent').style.display = 'block';
+  const overlay = document.getElementById('contentOverlay');
+  const content = document.getElementById('mainContent');
+  if (overlay) overlay.style.display = 'none';
+  if (content) content.style.display = 'block';
 }
 
 function hideContent() {
-  document.getElementById('contentOverlay').style.display = 'flex';
-  document.getElementById('mainContent').style.display = 'none';
+  const overlay = document.getElementById('contentOverlay');
+  const content = document.getElementById('mainContent');
+  if (overlay) overlay.style.display = 'flex';
+  if (content) content.style.display = 'none';
 }
 
 function resetSignupForm() {
@@ -326,8 +361,11 @@ function resetSignupForm() {
   `;
 
   // Re-attach event listeners
-  document.getElementById('signupForm').addEventListener('submit', handleSignup);
-  setupInstagramValidation();
+  const signupForm = document.getElementById('signupForm');
+  if (signupForm) {
+    signupForm.addEventListener('submit', handleSignup);
+    setupInstagramValidation();
+  }
 }
 
 // Close modal when clicking outside
